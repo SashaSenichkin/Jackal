@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--Project was exported from assembly: D:\Projects\Jackal\jackal.exe-->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A27396CD-34E0-47B7-BC84-88F9200E1ACB}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>jackal</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <FileAlignment>512</FileAlignment>
+    <RootNamespace>jackal</RootNamespace>
+    <LangVersion>7</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AI.cs" />
+    <Compile Include="Cells\Arrow.cs" />
+    <Compile Include="Cells\Ball.cs" />
+    <Compile Include="Cells\Barrier.cs" />
+    <Compile Include="Cells\BarrierCell.cs" />
+    <Compile Include="Cells\Cannibal.cs" />
+    <Compile Include="Cells\Canon.cs" />
+    <Compile Include="Cells\Castle.cs" />
+    <Compile Include="Cells\Cell.cs" />
+    <Compile Include="Cells\Chest.cs" />
+    <Compile Include="Cells\Crocodile.cs" />
+    <Compile Include="Cells\Healer.cs" />
+    <Compile Include="Cells\Horse.cs" />
+    <Compile Include="Cells\Lake.cs" />
+    <Compile Include="Cells\Pit.cs" />
+    <Compile Include="Cells\Plane.cs" />
+    <Compile Include="Cells\Rum.cs" />
+    <Compile Include="Cells\Sea.cs" />
+    <Compile Include="Cells\Ship.cs" />
+    <Compile Include="Jackal.cs" />
+    <Compile Include="GameData.cs" />
+    <Compile Include="GameField.cs" />
+    <Compile Include="Paint.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Unit.cs" />
+    <Compile Include="Properties\Resources.cs" />
+    <Compile Include="Properties\Settings.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="corsars" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GameField.resx" />
+    <EmbeddedResource Include="Jackal.resx" />
+    <EmbeddedResource Include="Properties\Resources.resx" />
+    <EmbeddedResource Include="Settings.resx" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
