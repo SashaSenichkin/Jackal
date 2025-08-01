@@ -1,112 +1,118 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: jackal.Cell
-// Assembly: jackal, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: DB49CD4A-B69F-4765-B90A-02396B5F5C89
-// Assembly location: D:\Projects\Jackal\jackal.exe
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace jackal
+namespace jackal;
+
+[Serializable]
+public class Cell
 {
-  [Serializable]
-  public class Cell
+  private int _coinsOnCell;
+  public int Spin;
+  public bool IsCellOpen;
+  public bool IsTarget;
+
+  public Image CellImage { get; private set; }
+
+  public Point CellAddress { get; protected set; }
+
+  public virtual int CoinsOnCell
   {
-    private int _coinsOnCell;
-    public int Spin;
-    public bool IsCellOpen;
-    public bool IsTarget;
+    get => _coinsOnCell;
+    set => _coinsOnCell = value;
+  }
 
-    public Image CellImage { get; private set; }
-
-    public Point CellAdress { get; protected set; }
-
-    public virtual int CoinsOnCell
+  public Cell(Image img, Point address)
+  {
+    for (var index = 0; index < Spin; ++index)
     {
-      get => _coinsOnCell;
-      set => _coinsOnCell = value;
+      img.RotateFlip(RotateFlipType.Rotate90FlipNone);
     }
 
-    public Cell(Image img, Point adress)
+    CellImage = img;
+    CellAddress = address;
+  }
+
+  public virtual void OnCellOpen(Unit unitToMove) => IsCellOpen = true;
+
+  public virtual void OnCellMove(Unit unitToMove)
+  {
+    if (!IsCellOpen)
     {
-      for (int index = 0; index < Spin; ++index)
-        img.RotateFlip(RotateFlipType.Rotate90FlipNone);
-      CellImage = img;
-      CellAdress = adress;
+      OnCellOpen(unitToMove);
     }
 
-    public virtual void OnCellOpen(Unit unitToMove) => IsCellOpen = true;
-
-    public virtual void OnCellMove(Unit unitToMove)
+    if (unitToMove.CoinHold)
     {
-      if (!IsCellOpen)
-        OnCellOpen(unitToMove);
-      if (unitToMove.CoinHold)
+      --GameData.AllCells.Single(x => x.CellAddress == unitToMove.UnitAddress).CoinsOnCell;
+      ++CoinsOnCell;
+    }
+    unitToMove.UnitAddress = CellAddress;
+    GameData.UnitAttack(unitToMove);
+  }
+
+  public virtual List<Cell> CellsAbleToMove(Unit unitToMove, bool withoutSea = true)
+  {
+    var move = new List<Cell>();
+    var x1 = CellAddress.X - 1;
+    while (true)
+    {
+      var num1 = x1;
+      var cellAddress = CellAddress;
+      var num2 = cellAddress.X + 1;
+      if (num1 <= num2)
       {
-        --GameData.AllCells.Single(x => x.CellAdress == unitToMove.UnitAdress).CoinsOnCell;
-        ++CoinsOnCell;
-      }
-      unitToMove.UnitAdress = CellAdress;
-      GameData.UnitAttack(unitToMove);
-    }
-
-    public virtual List<Cell> CellsAbleToMove(Unit unitToMove, bool withoutSea = true)
-    {
-      List<Cell> move = new List<Cell>();
-      int x1 = CellAdress.X - 1;
-      while (true)
-      {
-        int num1 = x1;
-        Point cellAdress = CellAdress;
-        int num2 = cellAdress.X + 1;
-        if (num1 <= num2)
+        if (x1 >= 0 && x1 < 13)
         {
-          if (x1 >= 0 && x1 < 13)
+          cellAddress = CellAddress;
+          var y = cellAddress.Y - 1;
+          while (true)
           {
-            cellAdress = CellAdress;
-            int y = cellAdress.Y - 1;
-            while (true)
+            var num3 = y;
+            cellAddress = CellAddress;
+            var num4 = cellAddress.Y + 1;
+            if (num3 <= num4)
             {
-              int num3 = y;
-              cellAdress = CellAdress;
-              int num4 = cellAdress.Y + 1;
-              if (num3 <= num4)
+              if (y >= 0 && y < 13)
               {
-                if (y >= 0 && y < 13)
+                var cell = GameData.AllCells.Single(p => p.CellAddress == new Point(x1, y));
+                if (cell is not Sea || !withoutSea)
                 {
-                  Cell cell = GameData.AllCells.Single(p => p.CellAdress == new Point(x1, y));
-                  if (!(cell is Sea) || !withoutSea)
-                    move.Add(cell);
+                  move.Add(cell);
                 }
-                y++;
               }
-              else
-                break;
+              y++;
+            }
+            else
+            {
+              break;
             }
           }
-          x1++;
         }
-        else
-          break;
+        x1++;
       }
-      if (unitToMove.CoinHold)
-        move.RemoveAll(x => !x.IsCellOpen || GameData.AllUnits.Where(y => y.Player != unitToMove.Player).Select(z => z.UnitAdress).Contains(x.CellAdress));
-      return move;
+      else
+      {
+        break;
+      }
+    }
+    if (unitToMove.CoinHold)
+    {
+      move.RemoveAll(x => !x.IsCellOpen || GameData.AllUnits.Where(y => y.Player != unitToMove.Player).Select(z => z.UnitAddress).Contains(x.CellAddress));
     }
 
-    public virtual XElement XmlSave() => new XElement("Card", new object[5]
-    {
-      new XAttribute("Adress", CellAdress),
-      new XElement("Spin", Spin),
-      new XElement("CoinsOnCell", CoinsOnCell),
-      new XElement("IsCellOpen", IsCellOpen),
-      new XElement("IsTarget", IsTarget)
-    });
-
-    public void SetNewAdress(Point newAdress) => CellAdress = newAdress;
-    
+    return move;
   }
+
+  public virtual XElement XmlSave() => new("Card", [
+    new XAttribute("Address", CellAddress),
+    new XElement("Spin", Spin),
+    new XElement("CoinsOnCell", CoinsOnCell),
+    new XElement("IsCellOpen", IsCellOpen),
+    new XElement("IsTarget", IsTarget),
+  ]);
+
+  public void SetNewAddress(Point newAddress) => CellAddress = newAddress;
+    
 }

@@ -1,28 +1,18 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: jackal.Cannibal
-// Assembly: jackal, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: DB49CD4A-B69F-4765-B90A-02396B5F5C89
-// Assembly location: D:\Projects\Jackal\jackal.exe
-
-using jackal.Properties;
+﻿using jackal.Properties;
 using System;
-using System.Drawing;
 
-namespace jackal
+namespace jackal;
+
+[Serializable]
+internal class Cannibal(Point address) : Cell(Resources.canibal, address)
 {
-  [Serializable]
-  internal class Cannibal : Cell
+  public override void OnCellMove(Unit unitToMove)
   {
-    public Cannibal(Point adress)
-      : base(Resources.canibal, adress)
+    if (!IsCellOpen)
     {
+      OnCellOpen(unitToMove);
     }
 
-    public override void OnCellMove(Unit unitToMove)
-    {
-      if (!IsCellOpen)
-        OnCellOpen(unitToMove);
-      GameData.AllUnits.Remove(unitToMove);
-    }
+    GameData.AllUnits.Remove(unitToMove);
   }
 }
